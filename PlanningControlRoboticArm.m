@@ -36,7 +36,7 @@ end
 
 %%
 % Specify the initial conditions for the robot.
-x0 = [-10;-10;pi/2;0;0;0];  % robot parks at [-10, -10], facing north
+x0 = [0;0;5;0;0;0];  % robot starts at [0, 0, 5] with no theta defined
 u0 = zeros(nu,1);           % thrust is zero
 
 %% Feedback Control for Path Following
@@ -55,7 +55,7 @@ nlobj_tracking = nlmpc(nx,ny,nu);
 %% 
 % Use the same state function and its Jacobian function.
 nlobj_tracking.Model.StateFcn = "RoboticArmStateFcn";
-nlobj_tracking.Jacobian.StateFcn = @RoboticArmStateJacobianFcn;
+% nlobj_tracking.Jacobian.StateFcn = @RoboticArmStateJacobianFcn;
 
 %%
 % For feedback control applications, reduce the computational effort by
@@ -84,8 +84,8 @@ end
 % positive at any time during the operation. Therefore, implement equality
 % constraints such that |u(1)*u(2)| must be |0| for all prediction steps.
 % Apply similar constraints for |u3| and |u4|.
-nlobj_tracking.Optimization.CustomEqConFcn = ...
-    @(X,U,data) [U(1:end-1,1).*U(1:end-1,2); U(1:end-1,3).*U(1:end-1,4)];
+% nlobj_tracking.Optimization.CustomEqConFcn = ...
+%     @(X,U,data) [U(1:end-1,1).*U(1:end-1,2); U(1:end-1,3).*U(1:end-1,4)];
 
 %%
 % Validate the your prediction model and custom functions, and their Jacobians.
@@ -113,5 +113,5 @@ DMeasFcn = @(xk) xk(1:3);
 EKF = extendedKalmanFilter(DStateFcn,DMeasFcn,x0);
 EKF.MeasurementNoise = 0.01;
 
-mdl = 'mpc_pendcartNMPC';
-open_system(mdl)
+% mdl = 'Simulink_Model';
+% open_system(mdl)
